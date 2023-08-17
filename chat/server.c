@@ -16,7 +16,8 @@ unsigned short serv_port = 25020;
 // Server IP address.
 char serv_ip[] = "127.0.0.1";
 // Buffer used to store data received from and sent to clients.
-char buff[128];
+char rbuff[128]; // buffer for receiving
+char sbuff[128]; // buffer for sending
 
 int main()
 {
@@ -26,7 +27,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("TCP Echo Server\n");
+    printf("\nTCP CHAT Server\n");
 
     // Create a TCP socket.
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -51,10 +52,10 @@ int main()
         exit(1);
     }
     cli_addr_len = sizeof(cli_addr);
-    for (;;)
+
+    while (1)
     {
-        printf("SERVER: Listening for client connections. Press Ctrl + C to stop the echo server.\n");
-        // Accept a connection request from a client.
+        printf("SERVER: Listening for client connections.\n");
         if ((connfd = accept(listenfd, (struct sockaddr *)&cli_addr, &cli_addr_len)) < 0)
         {
             printf("SERVER ERROR: Cannot accept client connections.\n");
@@ -62,18 +63,36 @@ int main()
             exit(1);
         }
         printf("SERVER: Connection from client %s accepted.\n", inet_ntoa(cli_addr.sin_addr));
-        // Receive data from the client.
-        if ((r = read(connfd, buff, 128)) < 0)
-            printf("SERVER ERROR: Cannot receive message from client\n");
-        else
+        printf("SERVER: Press Ctrl + C to stop the echo server.\nEnter bye to stop the chat.\n");
+        for (;;)
         {
-            buff[r] = '\0';
-            // Echo back the message from client.
-            if ((w = write(connfd, buff, 128)) < 0)
-                printf("SERVER ERROR: Cannot send message to the client.\n");
-            printf("SERVER: Sent to client: %s\n", buff);
-            printf("SERVER: Received from client: %s\n", buff);
-            printf("Echoed back %s to %s\n", buff, inet_ntoa(cli_addr.sin_addr));
+            if ((r = read(connfd, rbuff, 128)) < 0)
+                printf("SERVER ERROR: Cannot receive message from client\n");
+            else
+            {
+                rbuff[r] = '\0';
+                printf("SERVER: Received from client: %s\n", rbuff);
+                if (strcmp(rbuff, "bye") == 0)
+                {
+                    printf("SERVER: Client %s has closed the connection.\n", inet_ntoa(cli_addr.sin_addr));
+                    close(connfd);
+                    break;
+                }
+                printf("SERVER: Enter message to send to client: ");
+                gets(sbuff);
+
+                // Send message to client.
+                if ((w = write(connfd, sbuff, 128)) < 0)
+                    printf("SERVER ERROR: Cannot send message to the client.\n");
+                else
+                    printf("SERVER: Message sent to client: %s\n", sbuff);
+                if (strcmp(sbuff, "bye") == 0)
+                {
+                    printf("SERVER: Closing connection with client %s.\n", inet_ntoa(cli_addr.sin_addr));
+                    close(connfd);
+                    break;
+                }
+            }
         }
     }
     return 0;
