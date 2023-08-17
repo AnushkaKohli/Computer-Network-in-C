@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 struct sockaddr_in serv_addr;
 int skfd, r, w;
@@ -15,8 +16,8 @@ unsigned short serv_port = 25020;
 char serv_ip[] = "127.0.0.1";
 // Buffer used to store data received from and sent to clients.
 /* These arrays are used as buffers to store data received from clients (`rbuff`) and data to be sent to clients (`sbuff`) in the TCP Echo Server program. */
-char rbuff[128]; // buffer for receiving
-char sbuff[128]; // buffer for sending
+char rbuff[128];                              // buffer for receiving
+char sbuff[128] = "Please send me the time."; // buffer for sending
 
 int main()
 {
@@ -26,7 +27,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("TCP CHAT Client\n");
+    printf("TCP TIME Client\n");
 
     // Create a TCP socket.
     if ((skfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -42,42 +43,46 @@ int main()
         close(skfd);
         exit(1);
     }
-    printf("CLIENT: Connected to server.\nEnter bye to end the chat.\n");
+    printf("CLIENT: Connected to server.\n");
 
-    for (;;)
+    // Send a message to the echo server.
+    if ((w = write(skfd, sbuff, 128)) < 0)
     {
-        printf("CLIENT: Enter message to send to server: ");
-        gets(sbuff);
+        printf("CLIENT ERROR: Cannot send message to the echo server.\n");
+        close(skfd);
+        exit(1);
+    }
+    printf("CLIENT: Message sent to server: %s\n", sbuff);
 
-        // Send a message to the echo server.
-        if ((w = write(skfd, sbuff, 128)) < 0)
+    char res[128];
+    // Read message from the server.
+    if ((r = read(skfd, rbuff, 128)) < 0)
+        printf("CLIENT ERROR: Cannot read message from the echo server.\n");
+
+    else
+    {
+        rbuff[r] = '\0';
+        time_t t = time(NULL);
+        int sum = 0, i;
+        strcpy(res, rbuff);
+        for (i = 11; i < 13; i++)
         {
-            printf("CLIENT ERROR: Cannot send message to the echo server.\n");
-            close(skfd);
-            exit(1);
+            int temp = res[i] - '0';
+            sum = sum * 10 + temp;
         }
-        if (strcmp(sbuff, "bye") == 0)
-        {
-            printf("CLIENT: Closing connection.\n");
-            break;
-        }
-        printf("CLIENT: Message sent to server: %s\n", sbuff);
-
-        // Read message from the server.
-        if ((r = read(skfd, rbuff, 128)) < 0)
-            printf("CLIENT ERROR: Cannot read message from the echo server.\n");
-
+        char greeting[128];
+        if (sum >= 0 && sum < 12)
+            strcpy(greeting, "Good morning!");
+        else if (sum >= 12 && sum < 18)
+            strcpy(greeting, "Good afternoon!");
+        else if (sum >= 18 && sum < 24)
+            strcpy(greeting, "Good evening!");
         else
-        {
-            rbuff[r] = '\0';
-            if (strcmp(rbuff, "bye") == 0)
-            {
-                printf("CLIENT: Server closed connection.\n");
-                break;
-            }
-            // Print the received message on console.
-            printf("CLIENT: Received message from the echo server: %s\n", rbuff);
-        }
+            strcpy(greeting, "Good night!");
+
+        // Print the received message on console.
+        printf("CLIENT: The time of the server is: %s\n", rbuff);
+        printf("CLIENT: %s\n", greeting);
     }
     close(skfd);
     exit(1);
