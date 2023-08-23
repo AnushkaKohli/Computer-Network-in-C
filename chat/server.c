@@ -9,7 +9,6 @@
 
 /* The line `struct sockaddr_in serv_addr, cli_addr;` is declaring two variables of type `struct sockaddr_in`. */
 struct sockaddr_in serv_addr, cli_addr;
-/* These variables are used to store file descriptors, return values, and lengths related to the server socket and client connections in the TCP Echo Server program. */
 int listenfd, connfd, r, w, val, cli_addr_len;
 // The port number that the server will listen on.
 unsigned short serv_port = 25020;
@@ -27,7 +26,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("\nTCP CHAT Server\n");
+    printf("\nTCP CHAT SERVER\n");
 
     // Create a TCP socket.
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)

@@ -9,7 +9,6 @@
 
 /* The line `struct sockaddr_in serv_addr, cli_addr;` is declaring two variables of type `struct sockaddr_in`. */
 struct sockaddr_in serv_addr, cli_addr;
-/* These variables are used to store file descriptors, return values, and lengths related to the server socket and client connections in the TCP Echo Server program. */
 int listenfd, connfd, r, w, cli_addr_len;
 // The port number that the server will listen on.
 unsigned short serv_port = 25020;

@@ -14,7 +14,6 @@ unsigned short serv_port = 25020;
 // Server IP address.
 char serv_ip[] = "127.0.0.1";
 // Buffer used to store data received from and sent to clients.
-/* These arrays are used as buffers to store data received from clients (`rbuff`) and data to be sent to clients (`sbuff`) in the TCP Echo Server program. */
 char rbuff[128]; // buffer for receiving
 char sbuff[128]; // buffer for sending
 

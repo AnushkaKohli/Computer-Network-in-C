@@ -14,7 +14,6 @@ unsigned short serv_port = 25020;
 // Server IP address.
 char serv_ip[] = "127.0.0.1";
 // Buffer used to store data received from and sent to clients.
-/* These arrays are used as buffers to store data received from clients (`rbuff`) and data to be sent to clients (`sbuff`) in the TCP Echo Server program. */
 char rbuff[128]; // buffer for receiving
 char sbuff[128]; // buffer for sending
 
@@ -26,7 +25,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("TCP CHAT Client\n");
+    printf("TCP CHAT CLIENT\n");
 
     // Create a TCP socket.
     if ((skfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -49,10 +48,10 @@ int main()
         printf("CLIENT: Enter message to send to server: ");
         gets(sbuff);
 
-        // Send a message to the echo server.
+        // Send a message to the server.
         if ((w = write(skfd, sbuff, 128)) < 0)
         {
-            printf("CLIENT ERROR: Cannot send message to the echo server.\n");
+            printf("CLIENT ERROR: Cannot send message to the server.\n");
             close(skfd);
             exit(1);
         }
@@ -65,7 +64,7 @@ int main()
 
         // Read message from the server.
         if ((r = read(skfd, rbuff, 128)) < 0)
-            printf("CLIENT ERROR: Cannot read message from the echo server.\n");
+            printf("CLIENT ERROR: Cannot read message from the server.\n");
 
         else
         {
