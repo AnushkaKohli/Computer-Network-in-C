@@ -27,7 +27,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("TCP TIME Client\n");
+    printf("TCP TIME CLIENT\n");
 
     // Create a TCP socket.
     if ((skfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -45,10 +45,10 @@ int main()
     }
     printf("CLIENT: Connected to server.\n");
 
-    // Send a message to the echo server.
+    // Send a message to the server.
     if ((w = write(skfd, sbuff, 128)) < 0)
     {
-        printf("CLIENT ERROR: Cannot send message to the echo server.\n");
+        printf("CLIENT ERROR: Cannot send message to the server.\n");
         close(skfd);
         exit(1);
     }
@@ -57,7 +57,7 @@ int main()
     char res[128];
     // Read message from the server.
     if ((r = read(skfd, rbuff, 128)) < 0)
-        printf("CLIENT ERROR: Cannot read message from the echo server.\n");
+        printf("CLIENT ERROR: Cannot read message from the server.\n");
 
     else
     {
