@@ -26,7 +26,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("TCP BINARY CALCULATOR CLIENT\n");
+    printf("TCP BASIC CALCULATOR CLIENT\n");
 
     // Create a TCP socket.
     if ((skfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -48,19 +48,17 @@ int main()
     {
         printf("CLIENT: Enter the expression: ");
         gets(sbuff);
+        if (strcmp(sbuff, "bye") == 0)
+        {
+            printf("CLIENT: Closing connection.\n");
+            break;
+        }
         // Send a message to the echo server.
         if ((w = write(skfd, sbuff, 128)) < 0)
         {
             printf("CLIENT ERROR: Cannot send message to the echo server.\n");
             close(skfd);
             exit(1);
-        }
-
-        if (strcmp(sbuff, "bye") == 0)
-        {
-            printf("CLIENT: Closing connection.\n");
-            close(skfd);
-            break;
         }
 
         // Read message from the server.

@@ -9,6 +9,7 @@
 
 /* The line `struct sockaddr_in serv_addr, cli_addr;` is declaring two variables of type `struct sockaddr_in`. */
 struct sockaddr_in serv_addr, cli_addr;
+/* These variables are used to store file descriptors, return values, and lengths related to the server socket and client connections in the TCP Echo Server program. */
 int listenfd, connfd, r, w, cli_addr_len;
 // The port number that the server will listen on.
 unsigned short serv_port = 25020;
@@ -26,7 +27,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("\nTCP BINARY CALCULATOR SERVER\n");
+    printf("\nTCP BASIC CALCULATOR SERVER\n");
 
     // Create a TCP socket.
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -62,7 +63,7 @@ int main()
             exit(1);
         }
         printf("SERVER: Connection from client %s accepted.\n", inet_ntoa(cli_addr.sin_addr));
-        printf("SERVER: Press Ctrl + C to stop the server.\n");
+        printf("SERVER: Press Ctrl + C to stop the echo server.\nEnter bye to stop the chat.\n");
         for (;;)
         {
             if ((r = read(connfd, rbuff, 128)) < 0)
@@ -70,25 +71,47 @@ int main()
             else
             {
                 rbuff[r] = '\0';
-                if (strcmp(rbuff, "bye") == 0)
-                { // If the client sends bye, then the server will close the connection with that client.
+                if (strcmp(rbuff, "bye") == 0) // If the client sends bye, then the server will also exit.
+                {
                     printf("SERVER: Client has sent bye. Server will exit now.\n");
                     close(connfd);
+                    exit(0);
+                }
+                printf("SERVER: Expression sent by client is: %s\n", rbuff);
+                int k = rbuff[0] - '0';
+                char ch = rbuff[1];
+                int m = rbuff[2] - '0';
+                int result, flag = 0;
+                switch (ch)
+                {
+                case '+':
+                    result = k + m;
+                    break;
+                case '-':
+                    result = k - m;
+                    break;
+                case '*':
+                    result = k * m;
+                    break;
+                case '/':
+                    if (m == 0)
+                    {
+                        strcpy(sbuff, "Division by zero is not possible");
+                        flag = 1;
+                        break;
+                    }
+                    else
+                    {
+                        result = k / m;
+                        break;
+                    }
+                default:
+                    strcpy(sbuff, "Invalid Expression");
                     break;
                 }
-
-                printf("SERVER: Expression sent by client is: %s\n", rbuff);
-
-                char ans[128];
-                sprintf(ans, "echo 'scale=2; %s' | bc", rbuff);
-                FILE *fp = popen(ans, "r");
-                if (fp == NULL)
-                {
-                    printf("SERVER ERROR: Cannot execute command.\n");
-                    exit(1);
-                }
-                fgets(sbuff, 128, fp);
-                pclose(fp);
+                if (flag == 0)
+                    sprintf(sbuff, "%d", result);
+                // Send message to client.
                 if ((w = write(connfd, sbuff, 128)) < 0)
                     printf("SERVER ERROR: Cannot send message to the client.\n");
                 else
