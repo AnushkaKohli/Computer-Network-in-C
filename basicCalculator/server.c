@@ -63,7 +63,7 @@ int main()
             exit(1);
         }
         printf("SERVER: Connection from client %s accepted.\n", inet_ntoa(cli_addr.sin_addr));
-        printf("SERVER: Press Ctrl + C to stop the echo server.\nEnter bye to stop the chat.\n");
+        printf("SERVER: Press Ctrl + C to stop the echo server.\nEnter bye to stop the server.\n");
         for (;;)
         {
             if ((r = read(connfd, rbuff, 128)) < 0)
@@ -75,7 +75,7 @@ int main()
                 {
                     printf("SERVER: Client has sent bye. Server will exit now.\n");
                     close(connfd);
-                    exit(0);
+                    break;
                 }
                 printf("SERVER: Expression sent by client is: %s\n", rbuff);
                 int k = rbuff[0] - '0';

@@ -42,16 +42,16 @@ int main()
         close(skfd);
         exit(1);
     }
-    printf("CLIENT: Connected to server.\nEnter bye to end the chat.\n");
+    printf("CLIENT: Connected to server.\nEnter bye to stop the calculator.\n");
 
     for (;;)
     {
         printf("CLIENT: Enter the expression: ");
         gets(sbuff);
-        // Send a message to the echo server.
+        // Send a message to the server.
         if ((w = write(skfd, sbuff, 128)) < 0)
         {
-            printf("CLIENT ERROR: Cannot send message to the echo server.\n");
+            printf("CLIENT ERROR: Cannot send message to the server.\n");
             close(skfd);
             exit(1);
         }
@@ -65,7 +65,7 @@ int main()
 
         // Read message from the server.
         if ((r = read(skfd, rbuff, 128)) < 0)
-            printf("CLIENT ERROR: Cannot read message from the echo server.\n");
+            printf("CLIENT ERROR: Cannot read message from the server.\n");
 
         else
         {
