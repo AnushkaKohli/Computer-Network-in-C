@@ -25,7 +25,7 @@ int main()
     serv_addr.sin_family = AF_INET;          // Address family to use.
     serv_addr.sin_port = htons(serv_port);   // Port number.
     inet_aton(serv_ip, &serv_addr.sin_addr); // IP address to listen on.
-    printf("TCP LINUX COMMAND CLIENT\n");
+    printf("TCP BINARY CALCULATOR CLIENT\n");
 
     // Create a TCP socket.
     if ((skfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -41,11 +41,11 @@ int main()
         close(skfd);
         exit(1);
     }
-    printf("CLIENT: Connected to server.\nEnter bye to stop.\n");
+    printf("CLIENT: Connected to server.\nEnter bye to stop the calculator.\n");
 
     for (;;)
     {
-        printf("CLIENT: Enter the command: ");
+        printf("CLIENT: Enter the expression: ");
         gets(sbuff);
         // Send a message to the server.
         if ((w = write(skfd, sbuff, 128)) < 0)
@@ -62,28 +62,16 @@ int main()
             break;
         }
 
-        do
-        {
-            r = read(skfd, rbuff, 128);
-            if (strcmp(rbuff, "end") == 0)
-            {
-                printf("SERVER: Message ended\n");
-                break;
-            }
-            // Read message from the server.
-            else if (r < 0)
-            {
-                printf("CLIENT ERROR: Cannot read message from the server.\n");
-                exit(1);
-            }
+        // Read message from the server.
+        if ((r = read(skfd, rbuff, 128)) < 0)
+            printf("CLIENT ERROR: Cannot read message from the server.\n");
 
-            else
-            {
-                rbuff[r] = '\0';
-                // Print the received message on console.
-                printf("%s", rbuff);
-            }
-        } while (1);
+        else
+        {
+            rbuff[r] = '\0';
+            // Print the received message on console.
+            printf("CLIENT: The result of the expression is: %s\n", rbuff);
+        }
     }
     close(skfd);
     exit(1);
