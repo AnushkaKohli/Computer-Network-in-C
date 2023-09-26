@@ -67,34 +67,80 @@ int main()
         {
             if ((r = read(connfd, rbuff, 128)) < 0)
                 printf("SERVER ERROR: Cannot receive message from client\n");
+            else if (strcmp(rbuff, "bye") == 0)
+            {
+                printf("SERVER: Client has sent bye. Server will exit now.\n");
+                close(connfd);
+                break;
+            }
             else
             {
                 rbuff[r] = '\0';
-                if (strcmp(rbuff, "bye") == 0)
-                { // If the client sends bye, then the server will close the connection with that client.
-                    printf("SERVER: Client has sent bye. Server will exit now.\n");
-                    close(connfd);
-                    break;
-                }
+                printf("SERVER: File name sent by client is: %s\n", rbuff);
 
-                printf("SERVER: Word sent by client is: %s\n", rbuff);
-
-                char ans[128];
-                sprintf(ans, "echo 'scale=2; %s' | bc", rbuff);
-                FILE *file = fopen(ans, "r");
+                char result[128];
+                FILE *fp;
+                sprintf(result, "ls | grep ^%s > fp", rbuff);
+                system(result);
+                fp = fopen("fp", "r");
                 if (fp == NULL)
                 {
                     printf("SERVER ERROR: Cannot execute command.\n");
                     exit(1);
                 }
-                fgets(sbuff, 128, fp);
-                pclose(fp);
-                if ((w = write(connfd, sbuff, 128)) < 0)
+
+                // Read the output line by line until the end of the file is reached
+                // sbuff[0] = '\0'; // Clear the sbuff
+                while (fgets(sbuff, 128, fp) != 0)
+                {
+                    // printf("%s", sbuff);
+                    w = write(connfd, sbuff, 128);
+                }
+                fclose(fp);
+                if ((w = write(connfd, "end", 128)) < 0)
+                {
                     printf("SERVER ERROR: Cannot send message to the client.\n");
-                else
-                    printf("SERVER: Result sent to client: %s\n", sbuff);
+                    break;
+                }
+                printf("SERVER: Result of the search sent to client.\n");
+            }
+
+            // To return file contents to client
+            if ((r = read(connfd, rbuff, 128)) < 0)
+                printf("SERVER ERROR: Cannot receive message from client\n");
+            else
+            {
+                rbuff[r] = '\0';
+                printf("SERVER: File name sent by client is: %s\n", rbuff);
+
+                char result[128];
+                FILE *fp;
+                sprintf(result, "cat %s > fp", rbuff);
+                system(result);
+                fp = fopen("fp", "r");
+                if (fp == NULL)
+                {
+                    printf("SERVER ERROR: Cannot execute command.\n");
+                    exit(1);
+                }
+
+                // Read the output line by line until the end of the file is reached
+                // sbuff[0] = '\0'; // Clear the sbuff
+                while (fgets(sbuff, 128, fp) != 0)
+                {
+                    // printf("%s", sbuff);
+                    w = write(connfd, sbuff, 128);
+                }
+                fclose(fp);
+                if ((w = write(connfd, "end", 128)) < 0)
+                {
+                    printf("SERVER ERROR: Cannot send message to the client.\n");
+                    break;
+                }
+                printf("SERVER: Result of the search sent to client.\n");
             }
         }
     }
+    close(listenfd);
     return 0;
 }
