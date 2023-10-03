@@ -75,7 +75,7 @@ int main()
                 break;
             }
             // Print the received message on console.
-            printf("CLIENT: Received message from the echo server: %s\n", rbuff);
+            printf("CLIENT: Received message from the server: %s\n", rbuff);
         }
     }
     close(skfd);
