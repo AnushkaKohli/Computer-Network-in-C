@@ -48,7 +48,7 @@ int main()
     for (;;)
     {
         /*server waits, till client sends any  message to be receivied*/
-        printf("\nSERVER: Waiting for client...Press Cntrl + c to stop echo server.\n");
+        printf("\nSERVER: Waiting for client...Press Cntrl + c to stop the server.\n");
         cli_addr_len = sizeof(cli_addr);
         if ((r = recvfrom(skfd, buff, 128, 0, (struct sockaddr *)&cli_addr, &cli_addr_len)) < 0)
         {
