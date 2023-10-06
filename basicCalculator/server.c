@@ -64,7 +64,6 @@ int main()
                 if (strcmp(rbuff, "bye") == 0)
                 {
                     printf("SERVER: Client has sent bye. Server will exit now.\n");
-                    close(skfd);
                     break;
                 }
                 printf("SERVER: Expression sent by client is: %s\n", rbuff); /*received 'r' bytes form client*/
