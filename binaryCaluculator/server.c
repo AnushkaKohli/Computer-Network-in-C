@@ -64,7 +64,6 @@ int main()
                 if (strcmp(rbuff, "bye") == 0)
                 {
                     printf("SERVER: Client has sent bye. Server will exit now.\n");
-                    close(skfd);
                     break;
                 }
                 printf("SERVER: Expression sent by client is: %s\n", rbuff); /*received 'r' bytes form client*/
@@ -78,6 +77,9 @@ int main()
                 }
                 fgets(sbuff, 128, fp);
                 pclose(fp);
+                printf("sbuff is: %s", sbuff);
+                if (sbuff[0] == '\0')
+                    sprintf(sbuff, "Division by 0 is not possible.");
                 /*sending message to client*/
                 if ((s = sendto(skfd, sbuff, 128, 0, (struct sockaddr *)&cli_addr, cli_addr_len)) < 0)
                 {

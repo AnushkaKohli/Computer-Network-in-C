@@ -53,7 +53,6 @@ int main()
         if (strcmp(sbuff, "bye") == 0)
         {
             printf("CLIENT: Closing connection.\n");
-            close(skfd);
             exit(1);
         }
         printf("\nCLIENT: Message sent to the server: %s\n", sbuff); /*sent 's' bytes to server*/
