@@ -12,15 +12,11 @@
 int main()
 {
     struct sockaddr_in serv_addr;
-
     int skfd, r, s, serv_addr_len;
-
-    int short serv_port = 25021; /*port number used by the server*/
-
+    int short serv_port = 25021;  /*port number used by the server*/
     char serv_ip[] = "127.0.0.1"; /*server's IP-address*/
-
-    char rbuff[128]; /*buffer for receiving messages*/
-    char sbuff[128]; /*buffer for sending messages*/
+    char rbuff[128];              /*buffer for receiving messages*/
+    char sbuff[128];              /*buffer for sending messages*/
 
     /*initializing server socket address structure with zero values*/
     bzero(&serv_addr, sizeof(serv_addr));
@@ -52,20 +48,14 @@ int main()
         if (strcmp(sbuff, "bye") == 0)
         {
             printf("CLIENT: Closing connection.\n");
-
-            close(skfd);
-
             break;
         }
-        // printf("CLIENT: Message sent to the server: %s\n", sbuff); /*sent 's' bytes to server*/
 
         /*client waits, till server echoes back the message and then receivies it*/
         serv_addr_len = sizeof(serv_addr);
         if ((r = recvfrom(skfd, rbuff, 128, 0, (struct sockaddr *)&serv_addr, &serv_addr_len)) < 0)
         {
             printf("CLIENT ERROR: Cannot receive.\n");
-            // close(skfd);
-            // exit(1);
         }
         else
         {
@@ -73,14 +63,10 @@ int main()
             if (strcmp(rbuff, "bye") == 0)
             {
                 printf("CLIENT: Server closed connection.\n");
-
-                close(skfd);
-
                 break;
             }
         }
-
-        printf("CLIENT: Received message from the server: %s.\n", rbuff); /*received 'r' bytes from server*/
+        printf("CLIENT: Received message from the server: %s\n", rbuff); /*received 'r' bytes from server*/
     }
     close(skfd);
     exit(1);

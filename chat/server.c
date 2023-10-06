@@ -63,11 +63,10 @@ int main()
             else
             {
                 rbuff[r] = '\0';
-                printf("\nSERVER: Message received from client %s: %s.\n", inet_ntoa(cli_addr.sin_addr), rbuff); /*received 'r' bytes form client*/
+                printf("\nSERVER: Message received from client %s: %s\n", inet_ntoa(cli_addr.sin_addr), rbuff); /*received 'r' bytes form client*/
                 if (strcmp(rbuff, "bye") == 0)
                 {
                     printf("SERVER: Client %s has closed the connection.\n", inet_ntoa(cli_addr.sin_addr));
-                    close(skfd);
                     break;
                 }
                 printf("SERVER: Enter message to send to client: ");
@@ -76,15 +75,10 @@ int main()
                 if ((s = sendto(skfd, sbuff, 128, 0, (struct sockaddr *)&cli_addr, cli_addr_len)) < 0)
                 {
                     printf("\nSERVER ERROR: Cannot send message to the client.\n");
-                    // close(skfd);
-                    // exit(1);
                 }
-                // else
-                //     printf("SERVER: Message sent to client %s: %s\n", inet_ntoa(cli_addr.sin_addr), sbuff); /*sent 's' bytes to client*/
                 if (strcmp(sbuff, "bye") == 0)
                 {
                     printf("SERVER: Closing connection with client %s.\n", inet_ntoa(cli_addr.sin_addr));
-                    close(skfd);
                     break;
                 }
             }
