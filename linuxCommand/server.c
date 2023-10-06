@@ -61,7 +61,6 @@ int main()
             else if (strcmp(rbuff, "bye") == 0)
             {
                 printf("SERVER: Client has sent bye. Server will exit now.\n");
-                close(skfd);
                 break;
             }
             else
