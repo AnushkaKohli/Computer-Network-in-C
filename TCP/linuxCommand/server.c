@@ -80,9 +80,9 @@ int main()
 
                 char result[128];
                 FILE *fp;
-                sprintf(result, "%s > fp", rbuff);
+                sprintf(result, "%s > file", rbuff);
                 system(result);
-                fp = fopen("fp", "r");
+                fp = fopen("file", "r");
                 if (fp == NULL)
                 {
                     printf("SERVER ERROR: Cannot execute command.\n");

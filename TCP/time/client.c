@@ -62,7 +62,6 @@ int main()
     else
     {
         rbuff[r] = '\0';
-        time_t t = time(NULL);
         int sum = 0, i;
         strcpy(res, rbuff);
         for (i = 11; i < 13; i++)

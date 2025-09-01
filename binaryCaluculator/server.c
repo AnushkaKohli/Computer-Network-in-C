@@ -79,7 +79,7 @@ int main()
                 pclose(fp);
                 printf("sbuff is: %s", sbuff);
                 if (sbuff[0] == '\0')
-                    sprintf(sbuff, "Division by 0 is not possible.");
+                    sprintf(sbuff, "Division by 0 is not possible.\n");
                 /*sending message to client*/
                 if ((s = sendto(skfd, sbuff, 128, 0, (struct sockaddr *)&cli_addr, cli_addr_len)) < 0)
                 {

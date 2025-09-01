@@ -11,7 +11,7 @@
 struct sockaddr_in serv_addr, cli_addr;
 int listenfd, connfd, r, w, cli_addr_len;
 // The port number that the server will listen on.
-unsigned short serv_port = 25020;
+unsigned short serv_port = 35020;
 // Server IP address.
 char serv_ip[] = "127.0.0.1";
 // Buffer used to store data received from and sent to clients.
@@ -89,9 +89,13 @@ int main()
                     printf("SERVER ERROR: Cannot execute command.\n");
                     exit(1);
                 }
-                fgets(sbuff, 128, fp);
-                pclose(fp);
-                if ((w = write(connfd, sbuff, 128)) < 0)
+                while (fgets(sbuff, 128, fp) != 0)
+                {
+                    printf("%s", sbuff);
+                    w = write(connfd, sbuff, 128);
+                }
+                fclose(fp);
+                if ((w = write(connfd, "end", 128)) < 0)
                     printf("SERVER ERROR: Cannot send message to the client.\n");
                 else
                     printf("SERVER: Result sent to client: %s\n", sbuff);

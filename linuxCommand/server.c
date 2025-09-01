@@ -10,11 +10,8 @@
 int main()
 {
     struct sockaddr_in serv_addr, cli_addr;
-
     int skfd, r, s, cli_addr_len;
-
     int short serv_port = 25021; /*port number to be used by the server*/
-
     char serv_ip[] = "127.0.0.1"; /*server's IP-address*/
 
     char rbuff[128]; // buffer for receiving
